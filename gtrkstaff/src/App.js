@@ -10,6 +10,8 @@ import { Provider } from 'react-redux';
 import {store} from './store/index';
 import AddDapartament from './views/departamets/addDapartament';
 import ListDepartament from './views/departamets/listDepartament';
+import  AddJob from './views/Jobs/AddJob';
+import ListJobs from './views/Jobs/ListJob';
 function App() {
   return (
     <Provider store={store}>
@@ -17,8 +19,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addDepartament" element={<AddDapartament />} />
+        <Route path="/addJob" element={<AddJob />} />
         <Route path="/listEmployee" element={<ListEmployee />} />
         <Route path="/listDepartament" element={<ListDepartament />} />
+        <Route path="/listJobs" element={<ListJobs />} />
         <Route path="/uploadEmployee" element={<UploadEmployee />} />
         <Route path="/uploadSKUD" element={<UploadSKUD />} />
         <Route path="/uploadAbsentees" element={<UploadAbsentees />} />

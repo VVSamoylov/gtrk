@@ -9,48 +9,44 @@ import Button from "react-bootstrap/esm/Button";
 import Col from 'react-bootstrap/Col'
 import MenuUser from "../../../components/menuUser";
 import { connect } from 'react-redux';
-import {addDept} from '../../../entity/departament';
+import {addJob} from '../../../entity/job';
 
-class AddDepartament extends React.Component {
+class AddJob extends React.Component {
     constructor(props){
       super(props);
       this.state ={
-        depart: {
+        job: {
           id: '',
-          departName: '',
-          boss: ''
+          jobName: ''
         }
       }
       
       this.handleCheck = this.handleCheck.bind(this);
       this.handleClose = this.handleClose.bind(this);
       this.handleSave = this.handleSave.bind(this);
-      this.departName = React.createRef();
+      this.jobName = React.createRef();
       this.id = React.createRef();
-      this.boss = React.createRef();
     }
 
     handleSave(payload){
       //console.log(this.state.depart)
-      this.props.addDept({ departName:this.state.depart.departName, boss: this.state.depart.boss, id: new Date().getTime()});
-      this.setState({depart : {
+      this.props.addJob({ jobName:this.state.job.jobName,  id: new Date().getTime()});
+      this.setState({job : {
         id: '',
-        departName: '',
-        boss: ''
+        jobName: ''
       }});
-      this.departName.current.value ='';
-      this.boss.current.value = '';
+      this.jobName.current.value ='';
       
     }
     handleCheck(event){
       //let id = new Date().getTime;
       this.setState({
-        depart:{...this.state.depart, [event.target.name]: event.target.value}
+        job:{...this.state.job, [event.target.name]: event.target.value}
       })
     }
     handleClose(){
       //alert(this.state.depart)
-      console.log(this.state.depart)
+      console.log(this.state.job)
     }
 
     render() {
@@ -58,37 +54,23 @@ class AddDepartament extends React.Component {
       return (
         <Container>
         <MenuUser/>
-          <h1>Добавление нового отдела</h1>
+          <h1>Добавление новой должности</h1>
           <Row>
             <Col></Col>
             <InputGroup className="mb-3">
               <InputGroup.Text >
                 Название
               </InputGroup.Text>
-              <Form.Control ref={this.departName}
-                aria-label="Название отдела"
-                aria-describedby="departName"
-                name="departName"
+              <Form.Control ref={this.jobName}
+                aria-label="Название должности"
+                aria-describedby="jobName"
+                name="jobName"
                 onChange={this.handleCheck}
               />
             </InputGroup>
             <Col></Col>
           </Row>
-          <Row>
-            <Col></Col>
-            <InputGroup className="mb-3">
-              <InputGroup.Text >
-                Руководитель
-              </InputGroup.Text>
-              <Form.Control ref={this.boss}
-                aria-label="Руководитель"
-                aria-describedby="boss"
-                name="boss"
-                onChange={this.handleCheck}
-              />
-            </InputGroup>
-            <Col></Col>
-          </Row>
+          
           <Row>
             <Col></Col>
             <ButtonGroup aria-label="Departament added">
@@ -104,7 +86,7 @@ class AddDepartament extends React.Component {
   }
   const mapDispatchToProps = (dispatch) => {
     return {
-        addDept: (payload) => dispatch(addDept(payload))
+        addJob: (payload) => dispatch(addJob(payload))
     }
 };
-export default connect(null, mapDispatchToProps)(AddDepartament);
+export default connect(null, mapDispatchToProps)(AddJob);
