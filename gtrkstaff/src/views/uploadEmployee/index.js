@@ -30,10 +30,12 @@ class UploadEmployee extends React.Component{
 fileUpload(evn){
   evn.preventDefault();
   const fData = new FormData();
-  fData.append('file', this.state.filename);
-  let url = `${document.location.protocol}/uploadempl`;
+  let inFile = document.getElementById('fload').files[0];
+  console.log(inFile);
+  fData.append('file', inFile);
+  let url = `${document.location.protocol}/upload/uploadempl`;
   fetch(url, {
-    method: 'post',
+    method: 'POST',
     body: fData
   }).then(res =>{
     if(res.ok){
@@ -52,19 +54,23 @@ fileUpload(evn){
         <Container>
           <MenuUser/>
           <h1> Загрузка сотрудников!!</h1>
+          <Form method="POST" encType="multipart/form-data" >
           <Row>
           <Col></Col>
+          
           <Form.Group controlId="formFileLg" className="mb-3 control50">
                 <Form.Label>Загрузить Эксель файл </Form.Label>
-                <Form.Control onChange={this.selectFile} type="file" size="lg" />
+                <Form.Control onChange={this.selectFile} type="file" id="fload" name="file" size="lg" />
           </Form.Group>
+          
           <Col>
             
           </Col>
           </Row>
           <Row>
-            <Col xs={8}></Col> <Col><Button onClick={this.fileUpload}>Загрузить </Button></Col>
+            <Col xs={8}></Col> <Col><Button type="submit" onClick={this.fileUpload}>Загрузить </Button></Col>
           </Row>
+          </Form>
           {this.state.sucsess? 
           <Modal show={this.state.show }
               size="lg"
