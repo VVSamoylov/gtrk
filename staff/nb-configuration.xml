@@ -19,6 +19,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <configurations>
             <configuration id="gtrk" profiles="">
                 <property name="GTRK_POSTGRESS_DB_HOST">jdbc:postgresql://localhost</property>
+                <property name="GTRK_UPLOAD_DIR">tempgtrk</property>
                 <property name="GTRK_POSTGRESS_DB_PORT">5432</property>
                 <property name="GTRK_POSTGRESS_DB_PASSWORD">cadmin</property>
                 <property name="GTRK_POSTGRESS_DB_USERNAME">cadmin</property>
