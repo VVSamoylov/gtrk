@@ -34,6 +34,8 @@ fileUpload(evn){
   console.log(inFile);
   fData.append('file', inFile);
   let url = `${document.location.protocol}/upload/uploadempl`;
+  let header = new Headers();
+  header.append("Cookie", document.cookie);
   fetch(url, {
     method: 'POST',
     body: fData

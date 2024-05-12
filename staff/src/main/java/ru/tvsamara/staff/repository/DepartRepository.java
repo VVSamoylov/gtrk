@@ -14,4 +14,6 @@ import ru.tvsamara.staff.entity.DepartamentImpl;
 public interface DepartRepository  extends CrudRepository<DepartamentImpl, Long>{
      @Query("select d from DepartamentImpl d where d.depName=?1")
   DepartamentImpl getByDepName(String name);   
+     @Query("select d from DepartamentImpl d where d.id=?1")
+  DepartamentImpl getByDepId(Long id);   
 }
