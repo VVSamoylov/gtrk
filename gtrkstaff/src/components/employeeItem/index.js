@@ -1,80 +1,71 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState} from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import {fetchDeleteEmployee, saveStaff} from '../../entity/employee';
+import {fetchDeleteEmployee, saveStaff, fetchGetAllEmployee} from '../../entity/employee';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
-import { fetchGetAllEmployee } from '../../entity/employee';
+import { useSelector, useDispatch } from 'react-redux';
 /* eslint-disable */
-class EmployeeItem extends React.Component {
-    constructor(props){
-        super(props)
-        this.showItem = this.showItem.bind(this);
-        this.editANDdeletItem = this.editANDdeletItem.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
-        //this.useEffect = this.useEffect.bind(this);
-        //const dispatch = useDispatch();
-        this.state={
-            show: false,
-            staff: {
-                lastName: '',
-                firstName: '',
-                middleName: '',
-                jobName: '',
-                department: '',
-                snils: '',
-                workSchedule: '',
-                cardNumber: ''
-            },
-            empl: []
-        }
+export const EmployeeItem = ()=> {
 
-    }
+    const dispatch = useDispatch();
+    const [show, setShow] = useState(false);
+    const [staff, setStaff] = useState({
+        lastName: '',
+        firstName: '',
+        middleName: '',
+        jobName: '',
+        department: '',
+        snils: '',
+        workSchedule: '',
+        cardNumber: ''
+    });
+    
+    //const [state, setState] = useState();
+    const listEmpl = useSelector(state => state.employees.employees);
+    const [empl, setEmpl] = useState([...listEmpl]);
+    //console.log(listEmpl);
+    //setEmpl({empl: listEmpl});
 
-
-
-    handleCheck(event){
-        this.setState({
-            staff:{...this.state.staff, [event.target.name]: event.target.value}
+    const handleCheck =(event) =>{
+        setStaff({
+            ...staff, [event.target.name]: event.target.value
           });
     }
-    componentDidMount(){
-        this.setState({empl: [...this.props.listEmpl]})
+    // componentDidMount(){
+    //     this.setState({empl: [...this.props.listEmpl]})
+    // }
+    const handleClose = () =>{    
+        setShow(false);
     }
-    handleClose = () =>{    
-        this.setState({show: false});
-    }
-    editANDdeletItem(event){
+    const editANDdeletItem = (event) =>{
         const itemId = event.currentTarget.getAttribute("data-item");
         const typeBtn = event.target.getAttribute("data-button");
         switch(typeBtn){
             case  "edit" :  
-                let curItem = this.state.empl.filter(a => a.lastName == itemId)[0];
+                let curItem = empl.filter(a => a.lastName == itemId)[0];
                 //console.log(curItem)
-                this.setState({staff: {...curItem}});
-                this.setState({show: true});
+                setStaff({...curItem});
+                setShow(true);
                 break;
             case "delete" :
-                this.props.fetchDeleteEmployee(itemId);
-                this.setState({empl: [...this.state.empl.filter(a => a.lastName !== itemId)]});
+                dispatch(fetchDeleteEmployee(itemId));
+                setEmpl([...empl.filter(a => a.lastName !== itemId)]);
                 break;
             case "save" :
-                this.setState({empl: [...this.state.empl.filter(a=> a.lastName !== this.state.staff.lastName), {...this.state.staff}]})
-                this.props.saveStaff({...this.state.staff});
-                this.setState({show: false});
+                setEmpl([...empl.filter(a=> a.lastName !== staff.lastName), {...staff}])
+                dispatch(saveStaff({...staff}));
+                setShow(false);
                 break;
         }
         
     }
-    showItem(){
-        return this.state.empl.map((item) =>{
+    const showItem = ()=>{
+        return empl.map((item) =>{
            return ( 
             
-                <ListGroup.Item key={item.lastName} data-item={item.lastName} onClick={this.editANDdeletItem}>
+                <ListGroup.Item key={item.lastName} data-item={item.lastName} onClick={editANDdeletItem}>
                     <Row>
                         <Col xs={2}>{item.lastName}</Col>
                         <Col xs={2}>{item.firstName}</Col>
@@ -91,24 +82,24 @@ class EmployeeItem extends React.Component {
             )
         });
     }
-    render() {
-        useEffect( () =>{
-            this.props.fetchGetAllEmployee();
-        }
-              , []); 
-          
+    useEffect( () =>{
+        dispatch(fetchGetAllEmployee());
+    }
+          , [dispatch]); 
+
+         
       return (
         <Row>
             <Row>
                <Col xs={2}>Фамилия</Col><Col xs={2}>Имя</Col><Col xs={2}>Отчество</Col><Col xs={2}>Должность</Col><Col xs={2}>График работы</Col>
             </Row>
-            {!this.state.show ?
+            {!show ?
             (<ListGroup>                
-                {this.showItem()}
+                {showItem()}
            </ListGroup> ) :
-           (<Modal show={this.state.show} onHide={this.handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
+           (<Modal show={show} onHide={handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
                         <Modal.Header closeButton>
-                            <Modal.Title>Редакторовать {this.state.staff.lastName}</Modal.Title>
+                            <Modal.Title>Редакторовать {staff.lastName}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                        
@@ -122,8 +113,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="Фамилия"
                                     aria-describedby="lastName"
                                     name="lastName" 
-                                    defaultValue={this.state.staff.lastName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.lastName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -138,8 +129,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="Имя"
                                     aria-describedby="firstName"
                                     name="firstName"
-                                    defaultValue={this.state.staff.firstName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.firstName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -154,8 +145,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="Отчество"
                                     aria-describedby="middleName"
                                     name="middleName"
-                                    defaultValue={this.state.staff.middleName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.middleName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -170,8 +161,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="Должность"
                                     aria-describedby="jobName"
                                     name="jobName"
-                                    defaultValue={this.state.staff.jobName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.jobName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -186,8 +177,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="Подразделение"
                                     aria-describedby="department"
                                     name="department"
-                                    defaultValue={this.state.staff.department}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.department}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -202,8 +193,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="СНИЛС"
                                     aria-describedby="snils"
                                     name="snils"
-                                    defaultValue={this.state.staff.snils}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.snils}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -218,8 +209,8 @@ class EmployeeItem extends React.Component {
                                     aria-label="График работы"
                                     aria-describedby="workSchedule"
                                     name="workSchedule"
-                                    defaultValue={this.state.staff.workSchedule}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.workSchedule}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup> 
                             <Col></Col>
@@ -234,34 +225,25 @@ class EmployeeItem extends React.Component {
                                     aria-label="Номер карты"
                                     aria-describedby="cardNumber"
                                     name="cardNumber"
-                                    defaultValue={this.state.staff.cardNumber}
-                                    onChange={this.handleCheck}
+                                    defaultValue={staff.cardNumber}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
                         </Row>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary" onClick={this.handleClose} data-modal="close" >  Закрыть </Button>
-                            <Button variant="primary" onClick={this.editANDdeletItem} data-button="save"  > Сохранить</Button>
+                            <Button variant="secondary" onClick={handleClose} data-modal="close" >  Закрыть </Button>
+                            <Button variant="primary" onClick={editANDdeletItem} data-button="save"  > Сохранить</Button>
                         </Modal.Footer>
                     </Modal> )}
                     
         </Row>
      )
-    }
-}
-function mapStateToProps(state) {
-    return {
-        listEmpl: state.employees.employees
-    }
-  }
-  const mapDispatchToProps = (dispatch) => {
-    return {
-        fetchDeleteEmployee: (payload) => dispatch(fetchDeleteEmployee(payload)),
-        fetchGetAllEmployee: (payload) => dispatch(fetchGetAllEmployee()),
-      saveStaff: (payload) => dispatch(saveStaff(payload))
-    }
-};
 
-  export default connect(mapStateToProps, mapDispatchToProps)(EmployeeItem);
+     
+    }
+
+
+  
+

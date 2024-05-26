@@ -2,7 +2,7 @@ import React from 'react';
 import  Container from 'react-bootstrap/esm/Container';
 import {Row} from 'react-bootstrap';
 import MenuUser from '../../components/menuUser';
-import EmployeeItem from '../../components/employeeItem';
+import {EmployeeItem} from '../../components/employeeItem';
 /* eslint-disable */
 class ListEmployee extends React.Component {
     render() {
