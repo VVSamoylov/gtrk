@@ -1,11 +1,13 @@
 import React from 'react';
+import { useEffect } from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import {deleteStaff, saveStaff} from '../../entity/employee';
+import {fetchDeleteEmployee, saveStaff} from '../../entity/employee';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
+import { fetchGetAllEmployee } from '../../entity/employee';
 /* eslint-disable */
 class EmployeeItem extends React.Component {
     constructor(props){
@@ -14,6 +16,8 @@ class EmployeeItem extends React.Component {
         this.editANDdeletItem = this.editANDdeletItem.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
+        //this.useEffect = this.useEffect.bind(this);
+        //const dispatch = useDispatch();
         this.state={
             show: false,
             staff: {
@@ -30,6 +34,9 @@ class EmployeeItem extends React.Component {
         }
 
     }
+
+
+
     handleCheck(event){
         this.setState({
             staff:{...this.state.staff, [event.target.name]: event.target.value}
@@ -52,7 +59,7 @@ class EmployeeItem extends React.Component {
                 this.setState({show: true});
                 break;
             case "delete" :
-                this.props.deleteStaff(itemId);
+                this.props.fetchDeleteEmployee(itemId);
                 this.setState({empl: [...this.state.empl.filter(a => a.lastName !== itemId)]});
                 break;
             case "save" :
@@ -85,6 +92,11 @@ class EmployeeItem extends React.Component {
         });
     }
     render() {
+        useEffect( () =>{
+            this.props.fetchGetAllEmployee();
+        }
+              , []); 
+          
       return (
         <Row>
             <Row>
@@ -234,6 +246,7 @@ class EmployeeItem extends React.Component {
                             <Button variant="primary" onClick={this.editANDdeletItem} data-button="save"  > Сохранить</Button>
                         </Modal.Footer>
                     </Modal> )}
+                    
         </Row>
      )
     }
@@ -245,7 +258,8 @@ function mapStateToProps(state) {
   }
   const mapDispatchToProps = (dispatch) => {
     return {
-      deleteStaff: (payload) => dispatch(deleteStaff(payload)),
+        fetchDeleteEmployee: (payload) => dispatch(fetchDeleteEmployee(payload)),
+        fetchGetAllEmployee: (payload) => dispatch(fetchGetAllEmployee()),
       saveStaff: (payload) => dispatch(saveStaff(payload))
     }
 };

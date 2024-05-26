@@ -60,7 +60,7 @@ fileUpload(evn){
           <Row>
           <Col></Col>
           
-          <Form.Group controlId="formFileLg" className="mb-3 control50">
+          <Form.Group  className="mb-3 control50">
                 <Form.Label>Загрузить Эксель файл </Form.Label>
                 <Form.Control onChange={this.selectFile} type="file" id="fload" name="file" size="lg" />
           </Form.Group>
