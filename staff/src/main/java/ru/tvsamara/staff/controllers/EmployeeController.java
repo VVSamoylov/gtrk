@@ -2,6 +2,7 @@ package ru.tvsamara.staff.controllers;
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,29 +39,40 @@ public class EmployeeController {
         return employees;
     }
     
-    @GetMapping("/getEmployee")
+    @GetMapping("/getEmployeebyid")
     public Optional<EmployeeImpl> getEmployeeById(@RequestParam("id") Long id){
         Optional<EmployeeImpl> employee = emplRepository.findById(id);
         return employee;
     }
     
-    @PostMapping("/addemployee")
-    public Boolean addEmployee(@RequestParam("id") Long id, @RequestParam("snils")String snils, @RequestParam("fio") String fio, 
+    @PostMapping(value="/addemployee", consumes = "application/json", produces = "application/json")
+    public Boolean addEmployee(@RequestParam("id") Long id, @RequestParam("snils")String snils, @RequestParam("lastName") String lastName,
+            @RequestParam("firstName") String firstName, @RequestParam("middleName") String middleName,
             @RequestParam("depart") String depart, @RequestParam("jobname") String jobName, @RequestParam("workshcedule") String workShcedule){
         DepartamentImpl departament = departRepo.getByDepName(depart);
-        EmployeeImpl employee = emplRepository.geEmployeetById(id);
+        EmployeeImpl employee = emplRepository.getEmployeeById(id);
         if(employee == null){
             employee= new EmployeeImpl();
         }
         Position position = positionRepo.getByPosName(jobName);
         Workschedule workshcedule = workscheduleRepo.getByScheduleName(workShcedule);
         employee.setDept(departament);
-        employee.setFio(fio);
+        employee.setFirstName(firstName);
+        employee.setMiddleName(middleName);
+        employee.setLastName(lastName);
         employee.setPosition(position);
         employee.setSchedule(workshcedule);
         employee.setSnils(snils);
         emplRepository.save(employee);
         return true;
     }
-    
+    @DeleteMapping("/delemployee")
+    public Boolean deleteEmployee(@RequestParam("id") Long id){
+        EmployeeImpl employee = emplRepository.getEmployeeById(id);
+        if(employee == null){
+            employee= new EmployeeImpl();
+        }
+        emplRepository.delete(employee);
+        return true;
+    }
 }

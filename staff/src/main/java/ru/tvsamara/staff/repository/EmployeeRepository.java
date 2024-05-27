@@ -11,7 +11,7 @@ import ru.tvsamara.staff.entity.EmployeeImpl;
  */
 @Repository
 public interface EmployeeRepository extends CrudRepository<EmployeeImpl, Long> {
-    @Query("select e from EmployeeImpl e where e.depName=?1")
-  EmployeeImpl geEmployeetById(Long id);   
+    @Query("select e from EmployeeImpl e where e.id=?1")
+  EmployeeImpl getEmployeeById(Long id);   
     
 }

@@ -5,8 +5,6 @@ package ru.tvsamara.staff.API;
  * @author venia
  */
 public interface Employee {
-    String getFio();
-    void setFio(String fio);
     String getDept();
     void setDept(String dept);
     String getJob();
@@ -17,5 +15,11 @@ public interface Employee {
     void setAddress(String address);
     String getWorkShedule();
     void setWorkShedule(String workShedule);
+    String getLastName();
+    void setLastName(String lastName);
+    String getFirstName();
+    void setFirstName(String firstName);
+    String getMiddleName();
+    void setMiddleName(String middleName);
     
 }

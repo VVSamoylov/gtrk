@@ -7,13 +7,49 @@ import ru.tvsamara.staff.API.Employee;
  * @author venia
  */
 public class EmployeeDTO implements Employee{
-    private String fio;
+
+
+    private String lastName;
+    private String firstName;
+    private String middleName;
     private String dept;
     private String job;
     private String snils;
     private String address;
     private String workShedule;
+    @Override
+    public String getLastName() {
+        return lastName;
+    }
 
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Override
+    public String getFirstName() {
+        return firstName;
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    @Override
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
     @Override
     public String getWorkShedule() {
         return workShedule;
@@ -24,15 +60,7 @@ public class EmployeeDTO implements Employee{
         this.workShedule = workShedule;
     }
 
-    @Override
-    public String getFio() {
-        return fio;
-    }
-
-    @Override
-    public void setFio(String fio) {
-        this.fio = fio;
-    }
+    
 
     @Override
     public String getDept() {
@@ -77,5 +105,6 @@ public class EmployeeDTO implements Employee{
     public void setAddress(String address) {
         this.address = address;
     }
+
     
 }

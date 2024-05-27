@@ -41,7 +41,7 @@ public class DepartController {
         if(depart == null){
             depart = new DepartamentImpl();
         }
-        EmployeeImpl employee = employeeRepo.geEmployeetById(bossId);
+        EmployeeImpl employee = employeeRepo.getEmployeeById(bossId);
         depart.setBoss(employee);
         depart.setDepName(deptName);
         departRepo.save(depart);

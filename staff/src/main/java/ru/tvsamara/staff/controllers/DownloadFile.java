@@ -78,7 +78,9 @@ public class DownloadFile {
         // Сохраняем сотрудников в базу
         for(Employee emp : employees){
             EmployeeImpl empItem = new EmployeeImpl();
-            empItem.setFio(emp.getFio());
+            empItem.setFirstName(emp.getFirstName());
+            empItem.setMiddleName(emp.getMiddleName());
+            empItem.setLastName(emp.getLastName());
             empItem.setSnils(emp.getSnils());
             Workschedule wsh = sheduleRepo.getByScheduleName(emp.getWorkShedule());
             empItem.setSchedule(wsh);

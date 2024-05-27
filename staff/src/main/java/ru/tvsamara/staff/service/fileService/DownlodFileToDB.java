@@ -81,8 +81,13 @@ public class DownlodFileToDB {
                             if(!startRows){
                                 break;
                             }
-                            if(cell.getColumnIndex() == 0)
-                                empl.setFio(cell.getStringCellValue().toString());
+                            if(cell.getColumnIndex() == 0){
+                                String fn = cell.getStringCellValue().toString();
+                                String [] fio = fn.split(" ");
+                                empl.setLastName(fio[0]);
+                                empl.setFirstName(fio[1]);
+                                empl.setMiddleName(fio[2]);
+                            }
                             if(cell.getColumnIndex() == 3)
                                 empl.setDept(cell.getStringCellValue().toString());
                             if(cell.getColumnIndex() == 10)
@@ -96,7 +101,7 @@ public class DownlodFileToDB {
                             break;
                     }
                 }
-                if(empl.getFio() != null)
+                if(empl.getLastName()!=null)
                 lemployee.add(empl);
             }
             workbook.close();

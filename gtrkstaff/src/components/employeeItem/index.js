@@ -12,20 +12,33 @@ export const EmployeeItem = ()=> {
     const dispatch = useDispatch();
     const [show, setShow] = useState(false);
     const [staff, setStaff] = useState({
+        id: null,
         lastName: '',
         firstName: '',
         middleName: '',
-        jobName: '',
-        department: '',
+        position: {
+            id: null,
+            posName: '',
+        },
+        dept: {
+            id: null,
+            depName: '',
+        },
         snils: '',
-        workSchedule: '',
+        schedule:{
+            id: null,
+            scheduleName: '',
+        },
         cardNumber: ''
     });
     
     //const [state, setState] = useState();
     const listEmpl = useSelector(state => state.employees.employees);
-    const [empl, setEmpl] = useState([...listEmpl]);
-    //console.log(listEmpl);
+    const [empl, setEmpl] = useState([]);
+    console.log(" first ",listEmpl);
+    console.log("empl ", empl);
+   
+    
     //setEmpl({empl: listEmpl});
 
     const handleCheck =(event) =>{
@@ -70,8 +83,8 @@ export const EmployeeItem = ()=> {
                         <Col xs={2}>{item.lastName}</Col>
                         <Col xs={2}>{item.firstName}</Col>
                         <Col xs={2}>{item.middleName}</Col>
-                        <Col xs={2}>{item.jobName}</Col>
-                        <Col xs={2}>{item.workSchedule}</Col>
+                        <Col xs={2}>{item.position.posName}</Col>
+                        <Col xs={2}>{item.schedule.scheduleName}</Col>
                         <Col xs={1}><Button data-button="edit" variant="primary">Изменить</Button></Col>
                         <Col xs={1}><Button data-button="delete" variant="danger">Удалить</Button></Col>
                     </Row>
@@ -83,9 +96,15 @@ export const EmployeeItem = ()=> {
         });
     }
     useEffect( () =>{
-        dispatch(fetchGetAllEmployee());
+        let stat =  dispatch(fetchGetAllEmployee());
+        console.log("stat ", stat);
+        if(listEmpl.length !=0){
+            setEmpl([...listEmpl]);
+        }
+        console.log(listEmpl);
+        
     }
-          , [dispatch]); 
+        ,[dispatch]   ); 
 
          
       return (
@@ -161,7 +180,7 @@ export const EmployeeItem = ()=> {
                                     aria-label="Должность"
                                     aria-describedby="jobName"
                                     name="jobName"
-                                    defaultValue={staff.jobName}
+                                    defaultValue={staff.position.posName}
                                     onChange={handleCheck}
                                 />
                             </InputGroup>
@@ -209,7 +228,7 @@ export const EmployeeItem = ()=> {
                                     aria-label="График работы"
                                     aria-describedby="workSchedule"
                                     name="workSchedule"
-                                    defaultValue={staff.workSchedule}
+                                    defaultValue={staff.schedule.scheduleName}
                                     onChange={handleCheck}
                                 />
                             </InputGroup> 

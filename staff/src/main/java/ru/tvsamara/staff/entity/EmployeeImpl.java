@@ -21,7 +21,9 @@ public class EmployeeImpl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String snils;
-    private String fio;
+    private String firstName;
+    private String middleName; 
+    private String lastName;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "DEPARTAMENT_ID", unique = false, nullable = true)
@@ -43,12 +45,28 @@ public class EmployeeImpl {
         this.id = id;
     }
 
-    public String getFio() {
-        return fio;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFio(String fio) {
-        this.fio = fio;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     /**

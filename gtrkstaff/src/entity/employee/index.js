@@ -45,8 +45,8 @@ export const employeesSlice = createSliceWithThunks({
                 },
                 fulfilled: (state, action) => {
                     state.status = 'ok';
-                    console.log(action.payload);
-                    state.employees.push(action.payload)
+                    //console.log(action.payload);
+                    state.employees=action.payload;
                 },
             }
         ),
