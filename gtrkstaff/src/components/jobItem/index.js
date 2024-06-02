@@ -1,70 +1,100 @@
-import React from 'react';
+import React, { useState } from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import {deleteJob, saveJob} from '../../entity/job';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
+import { useSelector, useDispatch } from 'react-redux';
+import {fetchDeleteJobItem, fetchGetAllJobItem} from '../../service/service-jobitem';
+import { useQuery, useMutation } from 'react-query';
 /* eslint-disable */
-class JobItem extends React.Component {
-    constructor(props){
-        super(props)
-        this.showItem = this.showItem.bind(this);
-        this.editANDdeletItem = this.editANDdeletItem.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
-        this.state={
-            show: false,
-            job: {
-                id: '',
-                jobName: ''
-                
-              },
-            jobs: []
+export const JobItem = () => {
+    const dispatch = useDispatch();
+    let listJobs= useSelector(state => state.jobs.jobs);
+    const [show, setShow] = useState(false);
+    const [jobs, setJobs] = useState([]);
+    const [job, setJob] = useState(
+        {
+         id:'',
+         jobName:'',   
         }
-
-    }
-    handleCheck(event){
-        this.setState({
-            job:{...this.state.job, [event.target.name]: event.target.value}
+    )
+    const handleCheck=(event)=>{
+        setJob({
+            ...job, [event.target.name]: event.target.value
           });
     }
-    componentDidMount(){
-        this.setState({jobs: [...this.props.listJobs]})
-    }
+    // componentDidMount(){
+    //     this.setState({jobs: [...this.props.listJobs]})
+    // }
     
-    handleClose = () =>{    
-        this.setState({show: false});
+    const handleClose = () =>{    
+        setShow(false);
     }
-    editANDdeletItem(event){
+    const editANDdeletItem =(event)=>{
         const itemId = event.currentTarget.getAttribute("data-item");
         const typeBtn = event.target.getAttribute("data-button");
         switch(typeBtn){
             case  "edit" :  
-                let curItem = this.state.jobs.filter(a => a.id== itemId)[0];
+                let curItem = jobs.filter(a => a.id== itemId)[0];
                 //console.log(curItem)
-                this.setState({job: {...curItem}});
-                this.setState({show: true});
+                setJob( {...curItem});
+                setShow(true);
                 break;
             case "delete" :
-                this.props.deleteJob(itemId);
-                this.setState({jobs: [...this.state.jobs.filter(a => a.id !== itemId)]});
+                dispatch(deleteJob(itemId));
+                setJobs( [...jobs.filter(a => a.id !== itemId)]);
+                deleteJobServ(itemId);
                 break;
             case "save" :
-                this.props.saveJob({...this.state.job} );
-                this.setState({jobs: [...this.state.jobs.filter(a => a.id != itemId), {...this.state.job}]})
-                this.setState({show: false});
+                dispatch(saveJob({...this.state.job} ));
+                setJob([...jobs.filter(a => a.id != itemId), {...job}])
+                setShow(false);
                 
         }
         
     }
-    showItem(){
-        //this.setState({jobs: [...this.props.listJobs]})
-        return this.state.jobs.map((item) =>{
+
+    const deleteJobServ = (id) =>{
+        useMutation((event) => {
+           event.preventDefault();
+           fetchDeleteJobItem(id);
+         })
+   }
+
+
+    const { status, data, isFetching, error } = useQuery(
+        'getallDept',
+        fetchGetAllJobItem
+      );
+    if(status === 'loading'){
+        return (
+            <>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                </div>
+            </>
+        )
+    }
+    console.log("stat ", data);
+    if(status==='error'){
+        return  (<div>  Ошибка загрузки   <h1></h1></div>);
+                    
+    }
+    if(status==='success' && data != undefined){
+        //setEmpl([...data]);
+    }
+
+
+    console.log('data', data);
+    const showItem=(ajobs)=>{
+        return ajobs.map((item) =>{
            return ( 
             
-                <ListGroup.Item key={item.id} data-item={item.id} onClick={this.editANDdeletItem}>
+                <ListGroup.Item key={item.id} data-item={item.id} onClick={editANDdeletItem}>
                     <Row>
                         <Col xs={2}>{item.jobName}</Col>
                         <Col xs={1}><Button data-button="edit" variant="primary">Изменить</Button></Col>
@@ -77,19 +107,20 @@ class JobItem extends React.Component {
             )
         });
     }
-    render() {
+    
+    console.log(show);
       return (
         <Row>
             <Row>
                <Col xs={2}>Название</Col>
             </Row>
-            {!this.state.show ?
+            {!show ?
             (<ListGroup>                
-                {this.showItem()}
+                {showItem(data)}
            </ListGroup> ) :
-           (<Modal show={this.state.show} onHide={this.handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
+           (<Modal show={show} onHide={handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
                         <Modal.Header closeButton>
-                            <Modal.Title>Редакторовать {this.state.job.jobName}</Modal.Title>
+                            <Modal.Title>Редакторовать {job.jobName}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                        
@@ -103,8 +134,8 @@ class JobItem extends React.Component {
                                     aria-label="Наименование"
                                     aria-describedby="jobName"
                                     name="jobName" 
-                                    defaultValue={this.state.job.jobName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={job.jobName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -113,24 +144,11 @@ class JobItem extends React.Component {
                         
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary" onClick={this.handleClose} data-modal="close" >  Закрыть </Button>
-                            <Button variant="primary" onClick={this.editANDdeletItem} data-item={this.state.job.id} data-button="save"  > Сохранить</Button>
+                            <Button variant="secondary" onClick={handleClose} data-modal="close" >  Закрыть </Button>
+                            <Button variant="primary" onClick={editANDdeletItem} data-item={job.id} data-button="save"  > Сохранить</Button>
                         </Modal.Footer>
                     </Modal> )}
         </Row>
      )
-    }
-}
-function mapStateToProps(state) {
-    return {
-        listJobs: state.jobs.jobs
-    }
-  }
-  const mapDispatchToProps = (dispatch) => {
-    return {
-        deleteJob: (payload) => dispatch(deleteJob(payload)),
-        saveJob: (payload) => dispatch(saveJob(payload))
-    }
+    
 };
-
-  export default connect(mapStateToProps, mapDispatchToProps)(JobItem);

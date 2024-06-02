@@ -12,8 +12,11 @@ import AddDapartament from './views/departamets/addDapartament';
 import ListDepartament from './views/departamets/listDepartament';
 import  AddJob from './views/Jobs/AddJob';
 import ListJobs from './views/Jobs/ListJob';
+import {QueryClient, QueryClientProvider} from 'react-query';
+const queryClient = new QueryClient();
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
     <Provider store={store}>
     <Routes>
         <Route path="/" element={<Home />} />
@@ -28,6 +31,7 @@ function App() {
         <Route path="/uploadAbsentees" element={<UploadAbsentees />} />
     </Routes>
     </Provider>
+    </QueryClientProvider>
       
   );
 }

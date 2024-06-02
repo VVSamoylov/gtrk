@@ -1,72 +1,104 @@
 import React from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import {deleteDept, saveDept} from '../../entity/departament';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {fetchGetAllDepartament, fetchDeleteDepartament} from '../../service/service-departament';
+import { useQuery, useMutation } from 'react-query';
 /* eslint-disable */
-class DepartamentItem extends React.Component {
-    constructor(props){
-        super(props)
-        this.showItem = this.showItem.bind(this);
-        this.editANDdeletItem = this.editANDdeletItem.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
-        this.state={
-            show: false,
-            depart: {
-                id: '',
-                departName: '',
-                boss: ''
-              },
-            dept: []
-        }
+export const DepartamentItem = ()=> {
 
-    }
-    handleCheck(event){
-        this.setState({
-            depart:{...this.state.depart, [event.target.name]: event.target.value}
+    const dispatch = useDispatch();
+    let listDept = useSelector(state => state.departaments.departaments);
+    const [show, setShow] = useState(false);
+    const [depart, setDepart] = useState(
+        {
+            id: '',
+            departName: '',
+            boss: ''
+          }
+    )
+    const[dept, setDept] = useState([]);
+
+    const handleCheck = (event)=>{
+        this.setDepart({
+            ...depart, [event.target.name]: event.target.value
           });
     }
-    componentDidMount(){
-        this.setState({dept: [...this.props.listDept]})
+    // componentDidMount(){
+    //     this.setState({dept: [...this.props.listDept]})
+    // }
+    const handleClose = () =>{    
+        setShow(false);
     }
-    handleClose = () =>{    
-        this.setState({show: false});
-    }
-    editANDdeletItem(event){
+    const editANDdeletItem = (event)=>{
         const itemId = event.currentTarget.getAttribute("data-item");
         const typeBtn = event.target.getAttribute("data-button");
         switch(typeBtn){
             case  "edit" :  
-                let curItem = this.state.dept.filter(a => a.id== itemId)[0];
+                let curItem = data.filter(a => a.id== itemId)[0];
                 //console.log(curItem)
-                this.setState({depart: {...curItem}});
-                this.setState({show: true});
+                setDepart( {...curItem});
+                setShow(true);
                 break;
             case "delete" :
-                this.props.deleteDept(itemId);
-                this.setState({dept: [...this.state.dept.filter(a => a.id !== itemId)]});
+                dispatch(deleteDept(itemId));
+                setDept( [...dept.filter(a => a.id !== itemId)]);
                 break;
             case "save" :
-                this.props.saveDept([
-                    ...this.state.dept.filter(a=> a.id !== itemId), this.state.depart
-                ]);
-                this.setState({dept: [...this.state.dept.filter(a=> a.id !== itemId), this.state.depart]})
-                this.setState({show: false});
+                dispatch(saveDept([
+                    ...dept.filter(a=> a.id !== itemId), depart
+                ]));
+                setDept( [...dept.filter(a=> a.id !== itemId), depart])
+                setShow(false);
                 break;
         }
         
     }
-    showItem(){
-        return this.state.dept.map((item) =>{
+
+    const deleteDepart = (id) =>{
+        useMutation((event) => {
+           event.preventDefault();
+           fetchDeleteDepartament(id);
+         })
+   }
+
+
+    const { status, data, isFetching, error } = useQuery(
+        'getallDept',
+        fetchGetAllDepartament
+      );
+    if(status === 'loading'){
+        return (
+            <>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                </div>
+            </>
+        )
+    }
+    console.log("stat ", data);
+    if(status==='error'){
+        return  (<div>  Ошибка загрузки   <h1></h1></div>);
+                    
+    }
+    if(status==='success' && data != undefined){
+        //setEmpl([...data]);
+    }
+
+    const showItem = (arrdept)=>{
+        return arrdept.map((item) =>{
            return ( 
             
-                <ListGroup.Item key={item.id} data-item={item.id} onClick={this.editANDdeletItem}>
+                <ListGroup.Item key={item.id} data-item={item.id} onClick={editANDdeletItem}>
                     <Row>
-                        <Col xs={2}>{item.departName}</Col>
+                        <Col xs={2}>{item.depName}</Col>
                         <Col xs={2}>{item.boss}</Col>
                         <Col xs={1}><Button data-button="edit" variant="primary">Изменить</Button></Col>
                         <Col xs={1}><Button data-button="delete" variant="danger">Удалить</Button></Col>
@@ -78,19 +110,19 @@ class DepartamentItem extends React.Component {
             )
         });
     }
-    render() {
+    
       return (
         <Row>
             <Row>
                <Col xs={2}>Название</Col><Col xs={2}>Руководитель</Col>
             </Row>
-            {!this.state.show ?
+            {!show ?
             (<ListGroup>                
-                {this.showItem()}
+                {showItem(data)}
            </ListGroup> ) :
-           (<Modal show={this.state.show} onHide={this.handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
+           (<Modal show={show} onHide={handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
                         <Modal.Header closeButton>
-                            <Modal.Title>Редакторовать {this.state.depart.departName}</Modal.Title>
+                            <Modal.Title>Редакторовать {depart.depName}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                        
@@ -104,8 +136,8 @@ class DepartamentItem extends React.Component {
                                     aria-label="Название"
                                     aria-describedby="departName"
                                     name="departName" 
-                                    defaultValue={this.state.depart.departName}
-                                    onChange={this.handleCheck}
+                                    defaultValue={depart.depName}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -120,8 +152,8 @@ class DepartamentItem extends React.Component {
                                     aria-label="Имя"
                                     aria-describedby="firstName"
                                     name="firstName"
-                                    defaultValue={this.state.depart.boss}
-                                    onChange={this.handleCheck}
+                                    defaultValue={depart.boss}
+                                    onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
@@ -129,24 +161,11 @@ class DepartamentItem extends React.Component {
                         
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary" onClick={this.handleClose} data-modal="close" >  Закрыть </Button>
-                            <Button variant="primary" onClick={this.editANDdeletItem} data-item={this.state.depart.id} data-button="save"  > Сохранить</Button>
+                            <Button variant="secondary" onClick={handleClose} data-modal="close" >  Закрыть </Button>
+                            <Button variant="primary" onClick={editANDdeletItem} data-item={depart.id} data-button="save"  > Сохранить</Button>
                         </Modal.Footer>
                     </Modal> )}
         </Row>
      )
-    }
+    
 }
-function mapStateToProps(state) {
-    return {
-        listDept: state.departaments.departaments
-    }
-  }
-  const mapDispatchToProps = (dispatch) => {
-    return {
-        deleteDept: (payload) => dispatch(deleteDept(payload)),
-        saveDept: (payload) => dispatch(saveDept(payload))
-    }
-};
-
-  export default connect(mapStateToProps, mapDispatchToProps)(DepartamentItem);

@@ -2,7 +2,7 @@ import React from 'react';
 import  Container from 'react-bootstrap/esm/Container';
 import {Row} from 'react-bootstrap';
 import MenuUser from '../../../components/menuUser';
-import DepartamentItem from '../../../components/departamentItem';
+import {DepartamentItem} from '../../../components/departamentItem';
 /* eslint-disable */
 class ListDepartament extends React.Component {
     render() {

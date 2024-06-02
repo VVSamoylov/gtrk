@@ -1,11 +1,13 @@
-import React, { useEffect, useState} from 'react';
+import React, {  useState} from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
-import {fetchDeleteEmployee, saveStaff, fetchGetAllEmployee} from '../../entity/employee';
+import {saveStaff} from '../../entity/employee';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import { useSelector, useDispatch } from 'react-redux';
+import {fetchDeleteEmployee, fetchGetAllEmployee} from '../../service/service-employee';
+import { useQuery, useMutation } from 'react-query';
 /* eslint-disable */
 export const EmployeeItem = ()=> {
 
@@ -40,30 +42,35 @@ export const EmployeeItem = ()=> {
    
     
     //setEmpl({empl: listEmpl});
+    const deleteEmployee = (id) =>{
+         useMutation((event) => {
+            event.preventDefault();
+            fetchDeleteEmployee(id);
+          })
+    }
 
     const handleCheck =(event) =>{
         setStaff({
             ...staff, [event.target.name]: event.target.value
           });
     }
-    // componentDidMount(){
-    //     this.setState({empl: [...this.props.listEmpl]})
-    // }
+
     const handleClose = () =>{    
         setShow(false);
     }
     const editANDdeletItem = (event) =>{
+        console.log('editAndDelete');
         const itemId = event.currentTarget.getAttribute("data-item");
         const typeBtn = event.target.getAttribute("data-button");
         switch(typeBtn){
             case  "edit" :  
-                let curItem = empl.filter(a => a.lastName == itemId)[0];
+                let curItem = data.filter(a => a.lastName == itemId)[0];
                 //console.log(curItem)
                 setStaff({...curItem});
                 setShow(true);
                 break;
             case "delete" :
-                dispatch(fetchDeleteEmployee(itemId));
+                deleteEmployee(itemId);
                 setEmpl([...empl.filter(a => a.lastName !== itemId)]);
                 break;
             case "save" :
@@ -74,8 +81,8 @@ export const EmployeeItem = ()=> {
         }
         
     }
-    const showItem = ()=>{
-        return empl.map((item) =>{
+    const showItem = (arrempl)=>{
+        return arrempl.map((item) =>{
            return ( 
             
                 <ListGroup.Item key={item.lastName} data-item={item.lastName} onClick={editANDdeletItem}>
@@ -95,16 +102,34 @@ export const EmployeeItem = ()=> {
             )
         });
     }
-    useEffect( () =>{
-        let stat =  dispatch(fetchGetAllEmployee());
-        console.log("stat ", stat);
-        if(listEmpl.length !=0){
-            setEmpl([...listEmpl]);
+    
+    const { status, data, isFetching, error } = useQuery(
+            'getall',
+            fetchGetAllEmployee
+          );
+        if(status === 'loading'){
+            return (
+                <>
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                    </div>
+                </>
+            )
         }
-        console.log(listEmpl);
+        console.log("stat ", data);
+        if(status==='error'){
+            return  (<div>  Ошибка загрузки   <h1></h1></div>);
+                        
+        }
+        if(status==='success' && data != undefined){
+            //setEmpl([...data]);
+        }
+        //console.log(data);
         
-    }
-        ,[dispatch]   ); 
+    
+        
 
          
       return (
@@ -114,7 +139,7 @@ export const EmployeeItem = ()=> {
             </Row>
             {!show ?
             (<ListGroup>                
-                {showItem()}
+                {showItem(data)}
            </ListGroup> ) :
            (<Modal show={show} onHide={handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
                         <Modal.Header closeButton>
@@ -196,7 +221,7 @@ export const EmployeeItem = ()=> {
                                     aria-label="Подразделение"
                                     aria-describedby="department"
                                     name="department"
-                                    defaultValue={staff.department}
+                                    defaultValue={staff.dept.depName}
                                     onChange={handleCheck}
                                 />
                             </InputGroup>
