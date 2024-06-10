@@ -1,72 +1,76 @@
-import React, { useState } from 'react';
+import React from 'react';
 import  ListGroup from 'react-bootstrap/ListGroup';
 import {Row, Col, Button } from 'react-bootstrap';
-import {deleteJob, saveJob} from '../../entity/job';
+import {deleteDept, saveDept} from '../../entity/departament';
 import Modal from 'react-bootstrap/Modal';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {fetchDeleteJobItem, fetchGetAllJobItem} from '../../service/service-jobitem';
+import {fetchGetAllDepartament, fetchDeleteDepartament} from '../../service/service-departament';
 import { useQuery, useMutation } from 'react-query';
 /* eslint-disable */
-export const JobItem = () => {
+export const DepartamentItem = ()=> {
+
     const dispatch = useDispatch();
-    let listJobs= useSelector(state => state.jobs.jobs);
+    let listDept = useSelector(state => state.departaments.departaments);
     const [show, setShow] = useState(false);
-    const [jobs, setJobs] = useState([]);
-    const [job, setJob] = useState(
+    const [depart, setDepart] = useState(
         {
-         id:'',
-         jobName:'',   
-        }
+            id: '',
+            departName: '',
+            boss: ''
+          }
     )
-    const handleCheck=(event)=>{
-        setJob({
-            ...job, [event.target.name]: event.target.value
+    const[dept, setDept] = useState([]);
+
+    const handleCheck = (event)=>{
+        this.setDepart({
+            ...depart, [event.target.name]: event.target.value
           });
     }
     // componentDidMount(){
-    //     this.setState({jobs: [...this.props.listJobs]})
+    //     this.setState({dept: [...this.props.listDept]})
     // }
-    
     const handleClose = () =>{    
         setShow(false);
     }
-    const editANDdeletItem =(event)=>{
+    const editANDdeletItem = (event)=>{
         const itemId = event.currentTarget.getAttribute("data-item");
         const typeBtn = event.target.getAttribute("data-button");
         switch(typeBtn){
             case  "edit" :  
-                let curItem = jobs.filter(a => a.id== itemId)[0];
+                let curItem = data.filter(a => a.id== itemId)[0];
                 //console.log(curItem)
-                setJob( {...curItem});
+                setDepart( {...curItem});
                 setShow(true);
                 break;
             case "delete" :
-                dispatch(deleteJob(itemId));
-                setJobs( [...jobs.filter(a => a.id !== itemId)]);
-                deleteJobServ(itemId);
+                dispatch(deleteDept(itemId));
+                setDept( [...dept.filter(a => a.id !== itemId)]);
                 break;
             case "save" :
-                dispatch(saveJob({...this.state.job} ));
-                setJob([...jobs.filter(a => a.id != itemId), {...job}])
+                dispatch(saveDept([
+                    ...dept.filter(a=> a.id !== itemId), depart
+                ]));
+                setDept( [...dept.filter(a=> a.id !== itemId), depart])
                 setShow(false);
-                
+                break;
         }
         
     }
 
-    const deleteJobServ = (id) =>{
+    const deleteDepart = (id) =>{
         useMutation((event) => {
            event.preventDefault();
-           fetchDeleteJobItem(id);
+           fetchDeleteDepartament(id);
          })
    }
 
 
     const { status, data, isFetching, error } = useQuery(
         'getallDept',
-        fetchGetAllJobItem
+        fetchGetAllDepartament
       );
     if(status === 'loading'){
         return (
@@ -88,15 +92,14 @@ export const JobItem = () => {
         //setEmpl([...data]);
     }
 
-
-    console.log('data', data);
-    const showItem=(ajobs)=>{
-        return ajobs.map((item) =>{
+    const showItem = (arrdept)=>{
+        return arrdept.map((item) =>{
            return ( 
             
                 <ListGroup.Item key={item.id} data-item={item.id} onClick={editANDdeletItem}>
                     <Row>
-                        <Col xs={2}>{item.jobName}</Col>
+                        <Col xs={5}>{item.depName}</Col>
+                        <Col xs={5}>{item.boss}</Col>
                         <Col xs={1}><Button data-button="edit" variant="primary">Изменить</Button></Col>
                         <Col xs={1}><Button data-button="delete" variant="danger">Удалить</Button></Col>
                     </Row>
@@ -108,11 +111,10 @@ export const JobItem = () => {
         });
     }
     
-    console.log(show);
       return (
         <Row>
             <Row>
-               <Col xs={2}>Название</Col>
+               <Col xs={2}>Название</Col><Col xs={2}>Руководитель</Col>
             </Row>
             {!show ?
             (<ListGroup>                
@@ -120,7 +122,7 @@ export const JobItem = () => {
            </ListGroup> ) :
            (<Modal show={show} onHide={handleClose}  size="lg"  aria-labelledby="contained-modal-title-vcenter" centered>
                         <Modal.Header closeButton>
-                            <Modal.Title>Редакторовать {job.jobName}</Modal.Title>
+                            <Modal.Title>Редакторовать {depart.depName}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                        
@@ -131,24 +133,39 @@ export const JobItem = () => {
                                     Название
                                 </InputGroup.Text>  
                                 <Form.Control 
-                                    aria-label="Наименование"
-                                    aria-describedby="jobName"
-                                    name="jobName" 
-                                    defaultValue={job.jobName}
+                                    aria-label="Название"
+                                    aria-describedby="departName"
+                                    name="departName" 
+                                    defaultValue={depart.depName}
+                                    onChange={handleCheck}
+                                />
+                            </InputGroup>
+                            <Col></Col>
+                        </Row>
+                        <Row>
+                            <Col></Col>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Text >
+                                    Руководитель
+                                </InputGroup.Text>
+                                <Form.Control 
+                                    aria-label="Имя"
+                                    aria-describedby="firstName"
+                                    name="firstName"
+                                    defaultValue={depart.boss}
                                     onChange={handleCheck}
                                 />
                             </InputGroup>
                             <Col></Col>
                         </Row>
                         
-                        
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={handleClose} data-modal="close" >  Закрыть </Button>
-                            <Button variant="primary" onClick={editANDdeletItem} data-item={job.id} data-button="save"  > Сохранить</Button>
+                            <Button variant="primary" onClick={editANDdeletItem} data-item={depart.id} data-button="save"  > Сохранить</Button>
                         </Modal.Footer>
                     </Modal> )}
         </Row>
      )
     
-};
+}

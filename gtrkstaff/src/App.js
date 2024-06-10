@@ -13,6 +13,7 @@ import ListDepartament from './views/departamets/listDepartament';
 import  AddJob from './views/Jobs/AddJob';
 import ListJobs from './views/Jobs/ListJob';
 import {QueryClient, QueryClientProvider} from 'react-query';
+import ListShedules from './views/shedules/ListShedules';
 const queryClient = new QueryClient();
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/listEmployee" element={<ListEmployee />} />
         <Route path="/listDepartament" element={<ListDepartament />} />
         <Route path="/listJobs" element={<ListJobs />} />
+        <Route path="/listShedule" element={<ListShedules />} />
         <Route path="/uploadEmployee" element={<UploadEmployee />} />
         <Route path="/uploadSKUD" element={<UploadSKUD />} />
         <Route path="/uploadAbsentees" element={<UploadAbsentees />} />

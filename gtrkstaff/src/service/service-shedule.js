@@ -1,6 +1,6 @@
-export const fetchDeleteJobItem = async (id)=> {
+export const fetchDeleteShedule = async (id)=> {
     try{
-        const urlDelete = `${document.location.protocol}/position/delemployee/${id}`;
+        const urlDelete = `${document.location.protocol}/workschedule/deleteworkschedule/${id}`;
         const response = await fetch(urlDelete,
             {method: 'DELETE'}
         );
@@ -12,25 +12,24 @@ export const fetchDeleteJobItem = async (id)=> {
         console.log(ex.message);
     }
 }
-export const   fetchGetAllJobItem = async () => {
+export const   fetchGetAllShedule = async () => {
     try{
-        const urlGetAll = `${document.location.protocol}/position/getall`;
-        console.log(urlGetAll)
-        //const urlGetAll = `http://localhost:8080/position/getall`;
+        const urlGetAll = `${document.location.protocol}/workschedule/getall`;
+        //const urlGetAll = `http://localhost:8080/workschedule/getall`;
         const res = await fetch(urlGetAll).then(responce => responce.json());
         console.log("rest ok!!", res);
         return res;
     }catch(ex){
-        console.log('Exeption get resource', ex.message); 
+        console.log('Exeption rest', ex.message); 
         return [];
         
     }
 }
 //TODO
-export const   fetchAddJobItem = async () => {
+export const   fetchAddShedule = async () => {
     try{
-        const urlGetAll = `${document.location.protocol}/position/addposition`;
-        //const urlGetAll = `http://localhost:8080/position/addposition`;
+        const urlGetAll = `${document.location.protocol}/workschedule/addworkschedule`;
+        //const urlGetAll = `http://localhost:8080/workschedule/addworkschedule`;
         const res = await fetch(urlGetAll);
         //console.log("rest ok!!");
         return await res.json();

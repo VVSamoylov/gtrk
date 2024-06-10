@@ -20,7 +20,7 @@ public class WorkscheduleController {
     @Autowired
     private WorkscheduleRepository workschedRepo;
     
-    @GetMapping("/gatall")
+    @GetMapping("/getall")
     public Iterable<Workschedule> getAll(){
         return workschedRepo.findAll();
     }
