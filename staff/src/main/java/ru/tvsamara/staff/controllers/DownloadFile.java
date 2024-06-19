@@ -13,10 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.tvsamara.staff.API.Employee;
 import ru.tvsamara.staff.entity.DepartamentImpl;
 import ru.tvsamara.staff.entity.EmployeeImpl;
+import ru.tvsamara.staff.entity.NotWorking;
 import ru.tvsamara.staff.entity.Position;
 import ru.tvsamara.staff.entity.Workschedule;
 import ru.tvsamara.staff.repository.DepartRepository;
 import ru.tvsamara.staff.repository.EmployeeRepository;
+import ru.tvsamara.staff.repository.NotWorkingRepository;
 import ru.tvsamara.staff.repository.PositionRepository;
 import ru.tvsamara.staff.repository.WorkscheduleRepository;
 import ru.tvsamara.staff.service.fileService.DownlodFileToDB;
@@ -32,14 +34,17 @@ public class DownloadFile {
     private FileStorageService fileservice;
     @Autowired
     private DownlodFileToDB fileInExel;
+    
     @Autowired
-    DepartRepository departRepo;
+    private DepartRepository departRepo;
     @Autowired
-    PositionRepository positionRepo;
+    private PositionRepository positionRepo;
     @Autowired
-    EmployeeRepository employeeRepo;
+    private EmployeeRepository employeeRepo;
     @Autowired
-    WorkscheduleRepository sheduleRepo;
+    private WorkscheduleRepository sheduleRepo;
+    @Autowired
+    private NotWorkingRepository nworkRepo;
     
     @PostMapping(value = "/upload/uploadempl", headers = ("content-type=multipart/*"),  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity downloadEmployee(@RequestParam("file") MultipartFile file){
@@ -97,4 +102,22 @@ public class DownloadFile {
     }
 
     
+    @PostMapping(value = "/upload/uploadnotworking", headers = ("content-type=multipart/*"),  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity downloadNotWorking(@RequestParam("file") MultipartFile file){
+        fileservice.storeFile(file);
+        System.out.println("rest start " + file.getOriginalFilename());
+        List<NotWorking> notWprkings = fileInExel.DownlodFileNotWorkToDB(file);
+        fileservice.deleteFile(file);
+        //создаем набор уникальных значений отделов и должностей
+        
+        // Сохраняем в базе неявки
+        for(NotWorking ntw : notWprkings){
+            nworkRepo.save(ntw);
+        }
+        
+        
+        
+        return ResponseEntity.ok().build();
+    }
+ 
 }
