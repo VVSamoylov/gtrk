@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import {store} from './store/index';
 import AddDapartament from './views/departamets/addDapartament';
 import ListDepartament from './views/departamets/listDepartament';
+import ListNotWorks from './views/notWorks/listNotWorks';
 import  AddJob from './views/Jobs/AddJob';
 import ListJobs from './views/Jobs/ListJob';
 import {QueryClient, QueryClientProvider} from 'react-query';
@@ -28,6 +29,7 @@ function App() {
         <Route path="/listDepartament" element={<ListDepartament />} />
         <Route path="/listJobs" element={<ListJobs />} />
         <Route path="/listShedule" element={<ListShedules />} />
+        <Route path="/listNotWorks" element={<ListNotWorks />} />
         <Route path="/uploadEmployee" element={<UploadEmployee />} />
         <Route path="/uploadSKUD" element={<UploadSKUD />} />
         <Route path="/uploadAbsentees" element={<UploadAbsentees />} />

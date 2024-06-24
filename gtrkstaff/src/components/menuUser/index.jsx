@@ -23,8 +23,9 @@ class MenuUser extends React.Component {
                             <NavDropdown.Item as={Link} to="/listDepartament">Список отделов</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/addDepartament">Добавит отдел</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/listJobs">Список должностей</NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/listShedule">Графики</NavDropdown.Item>
                             <NavDropdown.Item as={Link} to="/addJob">Добавит должность</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/listNotWorks">Неявки</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to="/listShedule">Графики</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item href="#action/3.4">
